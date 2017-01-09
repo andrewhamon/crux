@@ -4,7 +4,11 @@ module Crux
   module Matcher
     class Path < Prefix
       def match?(context)
-        context.request.path == @prefix
+        regex.match(context.request.path)
+      end
+
+      private def build_regex
+        @regex = Regex.new("#{super.source}\\z")
       end
     end
   end

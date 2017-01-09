@@ -31,8 +31,15 @@ module Crux
 
     # Find first matching path through the tree and return the leaf node
     def find(context)
+
+      context.params = Crux::Matcher::MatchData.new unless context.params?
+
+      match_data = matcher.match?(context)
+
       # Not a match, don't look any further
-      return nil unless matcher.match?(context)
+      return nil unless match_data
+
+      context.params << match_data if match_data.is_a?(Regex::MatchData)
 
       # Is match and leaf, search is over
       return self if children.empty?
@@ -44,6 +51,7 @@ module Crux
       end
 
       # Nothing matches, return nil
+      context.params.pop if match_data.is_a?(Regex::MatchData)
       return nil
     end
 

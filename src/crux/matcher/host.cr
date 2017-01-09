@@ -1,12 +1,31 @@
 module Crux
   module Matcher
     class Host < Base
+      property! regex : Regex
+
       def initialize(@host : String)
-        @host = @host.downcase
+        build_regex
       end
 
       def match?(context)
-        context.request.host.to_s.downcase == @host
+        regex.match(context.request.host.to_s.downcase)
+      end
+
+      private def build_regex
+        path_segments = @host.split(".")
+
+        regex_segments = path_segments.map do |segment|
+          if segment.starts_with?(":")
+            "(?<#{segment[1..-1]}>[^\\.]+)"
+          else
+            segment.downcase
+          end
+        end
+
+        regex_string = regex_segments.join("\\.")
+        regex_string = "\\A#{regex_string}\\z"
+
+        @regex = Regex.new(regex_string)
       end
     end
   end

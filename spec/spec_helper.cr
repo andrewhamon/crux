@@ -13,6 +13,8 @@ end
 
 class FakeContext
   property request : FakeRequest
+  property! params : Crux::Matcher::MatchData
+
   def initialize(*, @request = FakeRequest.new)
   end
 end
