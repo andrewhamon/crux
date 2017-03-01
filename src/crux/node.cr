@@ -1,7 +1,9 @@
 require "http"
 
 module Crux
-  class Node < HTTP::Handler
+  class Node
+    include HTTP::Handler
+
     property matcher : Crux::Matcher::Matchable
     property! handler : HTTP::Handler | HTTP::Handler::Proc
     property children = Array(self).new
